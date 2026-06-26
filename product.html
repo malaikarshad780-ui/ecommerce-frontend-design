@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="css/reset.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
+ <script src="js/main.js"></script>
+   <script src="js/product.js"></script>
 <body>
 
   <!-- ===================== HEADER ===================== -->
@@ -187,6 +189,34 @@
             <tr><td>Protection</td><td>Refund Policy</td></tr>
             <tr><td>Warranty</td><td>2 years full warranty</td></tr>
           </table>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:18px">
+  <div style="display:flex;border:1px solid #E5E7EB;border-radius:4px;overflow:hidden;height:40px">
+    <button id="qtyDecr" style="width:36px;background:#F5F6F8;font-size:18px;cursor:pointer">−</button>
+    <input type="number" id="qtyInput" value="1" min="1" style="width:52px;text-align:center;border-left:1px solid #E5E7EB;border-right:1px solid #E5E7EB;font-size:14px;font-weight:600">
+    <button id="qtyIncr" style="width:36px;background:#F5F6F8;font-size:18px;cursor:pointer">+</button>
+  </div>
+  <button id="addToCartBtn" class="btn btn--primary" style="padding:0 28px;height:40px;font-size:14px">Add to Cart</button>
+</div>
+          <!-- SIZE SELECTOR -->
+<div class="size-selector">
+  <p class="size-label">Select size:</p>
+  <select id="sizeSelect">
+    <option value="">-- Choose size --</option>
+    <option value="XS">XS</option>
+    <option value="S">S</option>
+    <option value="M" selected>M</option>
+    <option value="L">L</option>
+    <option value="XL">XL</option>
+    <option value="XXL">XXL</option>
+  </select>
+ 
+</div>
+
+<!-- QTY + ADD TO CART -->
+<div class="product-actions">
+  <div class="qty-stepper">
+  </div>
+</div>
         </div>
 
         <!-- Supplier card -->
@@ -426,6 +456,5 @@
 
   </footer>
 
-  <script src="js/main.js"></script>
 </body>
 </html>

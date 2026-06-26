@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Cart — Brand</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* =====================================================
+       CART PAGE STYLES
+    ===================================================== */
+    .cart-page { padding: 28px 0 60px; background: var(--color-bg-soft); min-height: 60vh; }
+
+    .cart-page h2 { font-size: 20px; font-weight: 700; color: var(--color-ink); margin-bottom: 20px; }
+
+    /* Layout: cart items left + order summary right */
+    .cart-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ---- Cart Items Box ---- */
+    .cart-box {
+      background: var(--color-bg);
+      border: 1px solid var(--color-line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--color-line);
+    }
+    .cart-item:last-child { border-bottom: none; }
+
+    .cart-item__img {
+      width: 80px;
+      height: 80px;
+      border-radius: 4px;
+      background: var(--color-bg-soft);
+      object-fit: contain;
+      padding: 6px;
+    }
+
+    .cart-item__info { display: flex; flex-direction: column; gap: 4px; }
+    .cart-item__name { font-size: 14px; font-weight: 600; color: var(--color-ink); }
+    .cart-item__meta { font-size: 12px; color: var(--color-muted); }
+    .cart-item__meta span { margin-right: 10px; }
+
+    .cart-item__actions { display: flex; gap: 10px; margin-top: 8px; }
+    .cart-item__remove {
+      font-size: 12.5px;
+      color: #E53E3E;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .cart-item__remove:hover { text-decoration: underline; }
+    .cart-item__save {
+      font-size: 12.5px;
+      color: var(--color-blue);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .cart-item__save:hover { text-decoration: underline; }
+
+    .cart-item__right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+    .cart-item__price { font-size: 15px; font-weight: 700; color: var(--color-ink); white-space: nowrap; }
+
+    /* qty stepper inside cart */
+    .cart-qty {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--color-line);
+      border-radius: 4px;
+      overflow: hidden;
+      height: 32px;
+    }
+    .cart-qty__btn {
+      width: 30px; height: 100%;
+      font-size: 16px; font-weight: 600;
+      background: var(--color-bg-soft);
+      border: none; cursor: pointer;
+      color: var(--color-text);
+    }
+    .cart-qty__btn:hover { background: var(--color-blue); color: #fff; }
+    .cart-qty__input {
+      width: 40px; text-align: center;
+      border: none;
+      border-left: 1px solid var(--color-line);
+      border-right: 1px solid var(--color-line);
+      font-size: 13px; font-weight: 600;
+      color: var(--color-ink);
+      height: 100%;
+      -moz-appearance: textfield;
+    }
+    .cart-qty__input::-webkit-inner-spin-button,
+    .cart-qty__input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    /* Cart footer row */
+    .cart-box__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      background: var(--color-bg-soft);
+      border-top: 1px solid var(--color-line);
+    }
+    .cart-box__footer a { font-size: 13px; color: var(--color-blue); font-weight: 500; }
+    .remove-all-btn {
+      font-size: 13px;
+      color: #E53E3E;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .remove-all-btn:hover { text-decoration: underline; }
+
+    /* ---- Trust badges row ---- */
+    .trust-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .trust-item {
+      background: var(--color-bg);
+      border: 1px solid var(--color-line);
+      border-radius: 6px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .trust-icon {
+      width: 36px; height: 36px;
+      background: var(--color-bg-soft);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: var(--color-blue);
+    }
+    .trust-item p { font-size: 13px; font-weight: 600; color: var(--color-ink); margin-bottom: 2px; }
+    .trust-item span { font-size: 11.5px; color: var(--color-muted); }
+
+    /* ---- Saved for later ---- */
+    .saved-section { margin-top: 28px; }
+    .saved-section h3 { font-size: 16px; font-weight: 700; color: var(--color-ink); margin-bottom: 14px; }
+    .saved-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    .saved-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-line);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    .saved-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: var(--color-blue); }
+    .saved-card__img {
+      width: 100%; height: 140px;
+      object-fit: contain;
+      background: var(--color-bg-soft);
+      padding: 12px;
+      display: block;
+    }
+    .saved-card__body { padding: 12px; }
+    .saved-card__price { font-size: 15px; font-weight: 700; color: var(--color-ink); margin-bottom: 4px; }
+    .saved-card__name { font-size: 12.5px; color: var(--color-text); line-height: 1.5; margin-bottom: 10px; }
+    .move-to-cart-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12.5px; font-weight: 600;
+      color: var(--color-blue);
+      background: none; border: none; cursor: pointer; padding: 0;
+    }
+    .move-to-cart-btn:hover { text-decoration: underline; }
+
+    /* ---- Order Summary sidebar ---- */
+    .order-summary {
+      background: var(--color-bg);
+      border: 1px solid var(--color-line);
+      border-radius: 6px;
+      padding: 20px;
+      position: sticky;
+      top: 90px;
+    }
+    .order-summary h3 { font-size: 15px; font-weight: 700; color: var(--color-ink); margin-bottom: 14px; }
+
+    .coupon-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .coupon-row input {
+      flex: 1;
+      border: 1px solid var(--color-line);
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+    .coupon-row input:focus { outline: none; border-color: var(--color-blue); }
+    .coupon-row button {
+      padding: 8px 14px;
+      background: none;
+      border: 1px solid var(--color-blue);
+      color: var(--color-blue);
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .coupon-row button:hover { background: var(--color-blue); color: #fff; }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13.5px;
+      color: var(--color-text);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--color-line);
+    }
+    .summary-line:last-of-type { border-bottom: none; }
+    .summary-line .discount { color: #E53E3E; font-weight: 600; }
+    .summary-line .tax { color: #2BB36A; font-weight: 600; }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--color-ink);
+      padding: 14px 0 16px;
+      border-top: 2px solid var(--color-line);
+      margin-top: 4px;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 13px;
+      background: #2BB36A;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      margin-bottom: 12px;
+    }
+    .checkout-btn:hover { background: #219d5c; }
+    .checkout-btn:active { transform: scale(0.98); }
+
+    .payment-icons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .payment-icons img { height: 22px; opacity: 0.7; }
+    .payment-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 22px;
+      padding: 0 8px;
+      border: 1px solid var(--color-line);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-muted);
+      letter-spacing: .03em;
+    }
+
+    /* empty cart */
+    .cart-empty {
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-line);
+      border-radius: 6px;
+    }
+    .cart-empty svg { margin-bottom: 16px; opacity: .3; }
+    .cart-empty h3 { font-size: 18px; font-weight: 600; color: var(--color-ink); margin-bottom: 8px; }
+    .cart-empty p { font-size: 13.5px; color: var(--color-muted); margin-bottom: 20px; }
+
+    /* Promo banner */
+    .promo-banner {
+      background: var(--color-blue);
+      border-radius: 6px;
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 28px;
+      gap: 16px;
+    }
+    .promo-banner__text h4 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .promo-banner__text p { font-size: 12.5px; color: rgba(255,255,255,0.75); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .cart-layout { grid-template-columns: 1fr; }
+      .order-summary { position: static; }
+      .saved-grid { grid-template-columns: repeat(2, 1fr); }
+      .trust-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .cart-item { grid-template-columns: 64px 1fr; }
+      .cart-item__right { display: none; }
+      .saved-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Toast */
+    #toastContainer { position:fixed;bottom:28px;right:28px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none; }
+    .toast { background:var(--color-ink);color:#fff;font-size:13.5px;font-weight:500;padding:12px 20px;border-radius:6px;box-shadow:0 4px 18px rgba(0,0,0,0.18);opacity:0;transform:translateY(12px);transition:opacity .25s,transform .25s;pointer-events:auto;max-width:320px; }
+    .toast.is-visible { opacity:1;transform:translateY(0); }
+    .toast--success { background:var(--color-ink); }
+    .toast--error { background:#E53E3E; }
+    .toast--info { background:var(--color-blue); }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== HEADER (same as all pages) ===================== -->
+  <header class="site-header" id="siteHeader">
+    <div class="main-nav">
+      <div class="container main-nav__inner">
+        <a href="index.html" class="logo" aria-label="Brand home">
+          <img src="assets/images/logo/logo.png" alt="Brand logo" class="logo__img" />
+        </a>
+        <form class="search-form" role="search" action="#" method="get">
+          <input type="search" name="q" placeholder="Search" aria-label="Search products" />
+          <select class="search-form__category" aria-label="Category">
+            <option>All category</option>
+            <option>Electronics</option>
+            <option>Clothes and wear</option>
+            <option>Home interiors</option>
+            <option>Computer and tech</option>
+          </select>
+          <button type="submit" class="search-form__btn">Search</button>
+        </form>
+        <div class="nav-actions">
+          <button class="account-link"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="6.5" r="3.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 17c1.2-3.5 4-5 7-5s5.8 1.5 7 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Profile</span></button>
+          <button class="account-link"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 5h14v8a1 1 0 01-1 1H8l-3 3v-3H3V5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span>Message</span></button>
+          <button class="account-link"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 17s-6.5-4.2-6.5-9A4 4 0 0110 5.5 4 4 0 0116.5 8c0 4.8-6.5 9-6.5 9z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span>Orders</span></button>
+          <button class="account-link" id="cartHeaderBtn" onclick="window.location='cart.html'">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 5h2l1.6 9.2a1.5 1.5 0 001.5 1.3h6.3a1.5 1.5 0 001.48-1.25L17 7H6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="18" r="1" fill="currentColor"/><circle cx="14.5" cy="18" r="1" fill="currentColor"/></svg>
+            <span>My cart</span>
+          </button>
+          <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+        </div>
+      </div>
+    </div>
+    <div class="sub-nav">
+      <div class="container sub-nav__inner">
+        <nav class="sub-nav__left">
+          <button class="all-category-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 3.5h12M1 7h12M1 10.5h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> All category</button>
+          <a href="#">Hot offers</a><a href="#">Gift boxes</a><a href="#">Projects</a><a href="#" class="has-caret">Menu item</a><a href="#" class="has-caret">Help</a>
+        </nav>
+        <div class="sub-nav__right">
+          <select class="sub-nav__select"><option>English, USD</option><option>French, EUR</option><option>Urdu, PKR</option></select>
+          <select class="sub-nav__select"><option>Ship to 🇩🇪</option><option>Ship to 🇺🇸</option><option>Ship to 🇵🇰</option></select>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu__header">
+      <img src="assets/images/logo/logo.png" alt="Brand logo" class="logo__img" />
+      <button class="icon-btn" id="closeMobileMenu" aria-label="Close menu"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+    </div>
+    <nav class="mobile-menu__nav"><a href="#">All category</a><a href="#">Hot offers</a><a href="#">Gift boxes</a><a href="#">Projects</a><a href="#">Menu item</a><a href="#">Help</a></nav>
+  </div>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ===================== CART PAGE ===================== -->
+  <main class="cart-page">
+    <div class="container">
+
+      <h2 id="cartTitle">My cart (0)</h2>
+
+      <div class="cart-layout">
+
+        <!-- LEFT: cart items -->
+        <div>
+
+          <!-- empty state (shown when cart is empty) -->
+          <div class="cart-empty" id="cartEmpty" style="display:none">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M10 16h6l5.4 22.8a3 3 0 002.9 2.2h18.9a3 3 0 002.9-2.2L50 24H18" stroke="#333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="48" r="3" fill="#333"/><circle cx="42" cy="48" r="3" fill="#333"/></svg>
+            <h3>Your cart is empty</h3>
+            <p>Looks like you haven't added anything yet.</p>
+            <a href="listing.html" class="btn btn--primary" style="display:inline-block;padding:10px 28px;font-size:14px">Browse products</a>
+          </div>
+
+          <!-- cart items list -->
+          <div class="cart-box" id="cartBox">
+            <div id="cartItemsList">
+              <!-- items injected by cart.js -->
+            </div>
+            <div class="cart-box__footer">
+              <a href="listing.html">← Back to shop</a>
+              <button class="remove-all-btn" id="removeAllBtn">Remove all</button>
+            </div>
+          </div>
+
+          <!-- trust badges -->
+          <div class="trust-row">
+            <div class="trust-item">
+              <div class="trust-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.8 5.4H17l-4.6 3.3 1.8 5.4L10 13l-4.2 3.1 1.8-5.4L3 7.4h5.2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              </div>
+              <div><p>Secure payment</p><span>Encrypted and protected</span></div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14v8a1 1 0 01-1 1H8l-3 3v-3H3V5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              </div>
+              <div><p>Customer support</p><span>24/7 help available</span></div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 10h14M10 3l7 7-7 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div><p>Free delivery</p><span>On orders over $100</span></div>
+            </div>
+          </div>
+
+          <!-- saved for later -->
+          <div class="saved-section" id="savedSection" style="display:none">
+            <h3>Saved for later</h3>
+            <div class="saved-grid" id="savedGrid">
+              <!-- injected by cart.js -->
+            </div>
+          </div>
+
+          <!-- promo banner -->
+          <div class="promo-banner">
+            <div class="promo-banner__text">
+              <h4>Super discount on more than 100 USD</h4>
+              <p>Have you ever finally just write dummy info</p>
+            </div>
+            <button class="btn btn--orange">Shop now</button>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: order summary -->
+        <div class="order-summary">
+          <h3>Have a coupon?</h3>
+          <div class="coupon-row">
+            <input type="text" id="couponInput" placeholder="Add coupon" />
+            <button id="applyCouponBtn">Apply</button>
+          </div>
+
+          <div class="summary-line"><span>Subtotal:</span><span id="summarySubtotal">$0.00</span></div>
+          <div class="summary-line"><span>Discount:</span><span class="discount" id="summaryDiscount">- $0.00</span></div>
+          <div class="summary-line"><span>Tax (1%):</span><span class="tax" id="summaryTax">+ $0.00</span></div>
+
+          <div class="summary-total">
+            <span>Total:</span>
+            <span id="summaryTotal">$0.00</span>
+          </div>
+
+          <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+
+          <div class="payment-icons">
+            <span class="payment-badge">VISA</span>
+            <span class="payment-badge">MC</span>
+            <span class="payment-badge">PayPal</span>
+            <span class="payment-badge">Apple Pay</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="site-footer">
+    <div class="newsletter-band">
+      <div class="container newsletter-band__inner">
+        <h3>Subscribe on our newsletter</h3>
+        <p>Get daily news on upcoming offers from many suppliers all over the world</p>
+        <form class="newsletter-form" action="#" method="post">
+          <input type="email" name="email" placeholder="Email" aria-label="Email address" required />
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-col--brand">
+          <img src="assets/images/logo/logo.png" alt="Brand logo" class="logo__img" />
+          <p>Best information about the company gies here but now lorem ipsum is</p>
+          <div class="social-row">
+            <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 9h2.5V6H14c-1.93 0-3.5 1.57-3.5 3.5V11H8v3h2.5v6h3v-6h2.3l.7-3h-3v-1.5c0-.55.45-1 1-1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></a>
+            <a href="#" aria-label="Twitter"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="9" r="1" fill="currentColor"/><path d="M8 12v5M12 12v5M12 14c0-1.5 1-2 2-2s2 .5 2 2v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="12" rx="3" stroke="currentColor" stroke-width="1.4"/><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-col"><h4>About</h4><a href="#">About Us</a><a href="#">Find store</a><a href="#">Categories</a><a href="#">Blogs</a></div>
+        <div class="footer-col"><h4>Partnership</h4><a href="#">About Us</a><a href="#">Find store</a><a href="#">Categories</a><a href="#">Blogs</a></div>
+        <div class="footer-col"><h4>Information</h4><a href="#">Help Center</a><a href="#">Money Refund</a><a href="#">Shipping</a><a href="#">Contact us</a></div>
+        <div class="footer-col"><h4>For users</h4><a href="#">Login</a><a href="#">Register</a><a href="#">Settings</a><a href="#">My Orders</a></div>
+        <div class="footer-col footer-col--app"><h4>Get app</h4><a href="#"><img src="assets/images/logo/market-button.png" alt="App Store" style="height:32px;border-radius:4px;margin-bottom:6px" /></a><a href="#"><img src="assets/images/logo/market-button.png" alt="Google Play" style="height:32px;border-radius:4px" /></a></div>
+      </div>
+      <div class="footer-bottom"><span>© 2023 Ecommerce.</span><span>🇺🇸 English</span></div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
+</body>
+</html>
